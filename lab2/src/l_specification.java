@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class l_specification {
 
     private List<String> reserved_words= Arrays.asList("int","char","while","if","else","else if","scan","print","var","list");
@@ -55,6 +56,8 @@ public class l_specification {
     public boolean isPartOfOperator(char op) {
         return op == '!' || isOperator(String.valueOf(op));
     }
+
+
 
     public boolean isIdentifier(String token)
     {

@@ -8,6 +8,7 @@ public class ProgramInternalForm {
     private List<Pair<Integer,Pair<Integer,Integer>>>pif=new ArrayList<>();
 
     public void add(Integer code, Pair<Integer, Integer> value) {
+
         Pair<Integer, Pair<Integer, Integer>> pair = new Pair<>(code, value);
         pif.add(pair);
     }
@@ -20,5 +21,4 @@ public class ProgramInternalForm {
         }
         return result.toString();
     }
-
 }
