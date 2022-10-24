@@ -13,7 +13,7 @@ public class MScanner {
 
     private SymbolTable sym=new SymbolTable(17);
 
-    private final HashMap<String,Integer>pInternalForm=new HashMap<>();
+    private final HashMap<String,Pair<Integer,Integer>>pInternalForm=new HashMap<>();
 
     public boolean isIdentifier(String token) {
         String pattern = "^[a-zA-Z]([a-z|A-Z|0-9|_])*$";
