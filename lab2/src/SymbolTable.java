@@ -36,6 +36,7 @@ public class SymbolTable {
 
         if(!items.get(hashValue).contains(key))
         {
+            items.get(hashValue).add(key);
             return true;
         }
 
