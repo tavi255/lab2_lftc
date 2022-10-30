@@ -73,6 +73,8 @@ public class SymbolTable {
         return new Pair<>(-1,-1);
     }
 
+
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
