@@ -1,12 +1,13 @@
 start
-{
- var int a; int i; int sum; ;
+{ 012
+ var int a;  int i; int sum; ;
+
  scan(a);
  b=1;
  sum=0;
  while(b<=a)
 {
-if(a%b ==0)
+if(a%b==0)
 {
 sum=sum+b;
 }

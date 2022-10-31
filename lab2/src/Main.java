@@ -3,7 +3,7 @@ public class Main {
     public static void main(String[] args)
     {
         MScanner scanner=new MScanner();
-        scanner.scan("D:\\lftc lab\\lab2_lftc\\lab2\\src\\test_files\\p1err.txt");
+        scanner.scan("D:\\lftc lab\\lab2_lftc\\lab2\\src\\test_files\\p1.txt");
     }
 
 

@@ -7,7 +7,7 @@ import java.util.*;
 public class MScanner {
 
     private List<String> reservedWords= Arrays.asList("int",
-            "list","char","if","else","else if","start","var","scan","print");
+            "list","char","if","else","else if","start","var","scan","print","while");
 
     private List<String>operators= Arrays.asList("+","-",
             "*","/","%","=","==","!=","<",">");
@@ -15,7 +15,7 @@ public class MScanner {
 
     private SymbolTable sym=new SymbolTable(17);
 
-    private final HashMap<String,Pair<Integer,Integer>>pInternalForm=new HashMap<>();
+    private final List<Pair<String,Pair<Integer,Integer>>>pInternalForm=new ArrayList<>();
 
     private int curly_brackets=0;
     private int angle_brackets=0;
@@ -57,12 +57,12 @@ public class MScanner {
 
                 String v=sb.toString();
                 if(v.length()>0 && reservedWords.contains(v))
-                    pInternalForm.put(v,new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(v,new Pair<>(0,0)));
                 else if(v.length()>0 && (isIdentifier(v)|| isConstant(v)))
                 {
                     sym.add(v);
                     Pair<Integer,Integer> poz=sym.getPosition(v);
-                    pInternalForm.put(v,poz);
+                    pInternalForm.add(new Pair<>(v,poz));
                 }
 
                 else if(v.length()>0)
@@ -70,20 +70,20 @@ public class MScanner {
 
                 while(i<value.length() && value.charAt(i)==';')
                 {
-                    pInternalForm.put(String.valueOf(value.charAt(i)),new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
                     i++;
                 }
 
                 if(i<value.length() && value.charAt(i)=='(')
                 {
-                    pInternalForm.put(String.valueOf(value.charAt(i)),new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
                     parenthesses++;
                     i++;
                 }
 
                 else if(i<value.length() && value.charAt(i)==')')
                 {
-                    pInternalForm.put(String.valueOf(value.charAt(i)),new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
                     parenthesses--;
                     if(parenthesses<0)
                         return false;
@@ -92,14 +92,14 @@ public class MScanner {
 
                 else if(i<value.length() && value.charAt(i)=='{')
                 {
-                    pInternalForm.put(String.valueOf(value.charAt(i)),new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
                     curly_brackets++;
                     i++;
                 }
 
                 else if(i<value.length() && value.charAt(i)=='}')
                 {
-                    pInternalForm.put(String.valueOf(value.charAt(i)),new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
                     curly_brackets--;
                     if(curly_brackets<0)
                         return false;
@@ -109,14 +109,14 @@ public class MScanner {
 
                 else if(i<value.length() && value.charAt(i)=='[')
                 {
-                    pInternalForm.put(String.valueOf(value.charAt(i)),new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
                     square_brackets++;
                     i++;
                 }
 
                 else if(i<value.length() && value.charAt(i)==']')
                 {
-                    pInternalForm.put(String.valueOf(value.charAt(i)),new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
                     square_brackets--;
                     if(square_brackets<0)
                         return false;
@@ -125,14 +125,14 @@ public class MScanner {
 
                 else if(i<value.length() && value.charAt(i)=='<')
                 {
-                    pInternalForm.put(String.valueOf(value.charAt(i)),new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
                     angle_brackets++;
                     i++;
                 }
 
                 else if(i<value.length() && value.charAt(i)=='>')
                 {
-                    pInternalForm.put(String.valueOf(value.charAt(i)),new Pair<>(0,0));
+                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
                     angle_brackets--;
                     if(angle_brackets<0)
                         return false;
@@ -151,7 +151,7 @@ public class MScanner {
                     if(!operators.contains(sb2.toString()))
                         return false;
                     else
-                        pInternalForm.put(sb2.toString(),new Pair<>(0,0));
+                        pInternalForm.add(new Pair<>(sb2.toString(),new Pair<>(0,0)));
 
                 } else if (i<value.length()) {
 
@@ -203,7 +203,7 @@ public class MScanner {
                 FileWriter pif=new FileWriter("D:\\lftc lab\\lab2_lftc\\lab2\\src\\test_files\\PIF.out");
 
                 StringBuilder result = new StringBuilder();
-                for (Map.Entry<String, Pair<Integer, Integer>> pair : pInternalForm.entrySet()) {
+                for (var pair : pInternalForm) {
                     result.append(pair.getKey()).append(" -> (").append(pair.getValue().getKey()).append(", ").append(pair.getValue().getValue()).append(")\n");
                 }
 
