@@ -1,5 +1,5 @@
 start
-{ 012
+{
  var int a;  int i; int sum; ;
 
  scan(a);

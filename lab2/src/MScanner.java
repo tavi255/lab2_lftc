@@ -10,8 +10,10 @@ public class MScanner {
             "list","char","if","else","else if","start","var","scan","print","while");
 
     private List<String>operators= Arrays.asList("+","-",
-            "*","/","%","=","==","!=","<",">");
-    private List<String>separators=Arrays.asList("{","}","(",")",";","[","]"," ","<",">",",");
+            "*","/","%","=","==","!=","<",">","<=",">=");
+
+    private List<String>separators=Arrays.asList("{","}","(",")",";","[","]"," ","<",">");
+    private List<String>special_cases=Arrays.asList("=-","=+","==+","==-","!=-","!=+");
 
     private SymbolTable sym=new SymbolTable(17);
 
@@ -25,17 +27,16 @@ public class MScanner {
 
 
     public boolean isIdentifier(String token) {
-        String pattern = "^[a-zA-Z]([a-z|A-Z|0-9|_])*$";
+        String pattern = "^[a-zA-Z]([a-z|A-Z|0-9])*$";
         return token.matches(pattern);
     }
 
     public boolean isConstant(String token) {
-        String numericPattern = "^0|[+|-][1-9]([0-9])*|[1-9]([0-9])*|[+|-][1-9]([0-9])*\\.([0-9])*|[1-9]([0-9])*\\.([0-9])*$";
+        String numericPattern = "^0|[+|-][1-9]([0-9])*|[1-9]([0-9])*$";
         String charPattern = "^\'[a-zA-Z0-9_?!#*./%+=<>;)(}{ ]\'";
-        String stringPattern = "^\"[a-zA-Z0-9_?!#*./%+=<>;)(}{ ]+\"";
+
         return token.matches(numericPattern) ||
-                token.matches(charPattern) ||
-                token.matches(stringPattern);
+                token.matches(charPattern);
 
     }
 
@@ -60,13 +61,24 @@ public class MScanner {
                     pInternalForm.add(new Pair<>(v,new Pair<>(0,0)));
                 else if(v.length()>0 && (isIdentifier(v)|| isConstant(v)))
                 {
-                    sym.add(v);
-                    Pair<Integer,Integer> poz=sym.getPosition(v);
-                    pInternalForm.add(new Pair<>(v,poz));
+                    if(isIdentifier(v)) {
+                        sym.add(v);
+                        Pair<Integer,Integer> poz=sym.getPosition(v);
+                        pInternalForm.add(new Pair<>("id",poz));
+
+                    }
+                    else {
+                        sym.add(v);
+                        Pair<Integer,Integer> poz=sym.getPosition(v);
+                        pInternalForm.add(new Pair<>("const",poz));
+                    }
+
+                }
+                else if(v.length()>0){
+                    return false;
                 }
 
-                else if(v.length()>0)
-                    return false;
+
 
                 while(i<value.length() && value.charAt(i)==';')
                 {
@@ -123,21 +135,6 @@ public class MScanner {
                     i++;
                 }
 
-                else if(i<value.length() && value.charAt(i)=='<')
-                {
-                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
-                    angle_brackets++;
-                    i++;
-                }
-
-                else if(i<value.length() && value.charAt(i)=='>')
-                {
-                    pInternalForm.add(new Pair<>(String.valueOf(value.charAt(i)),new Pair<>(0,0)));
-                    angle_brackets--;
-                    if(angle_brackets<0)
-                        return false;
-                    i++;
-                }
 
                 else if(i<value.length() && operators.contains(String.valueOf(value.charAt(i))))
                 {
@@ -148,12 +145,52 @@ public class MScanner {
                         i++;
                     }
 
-                    if(!operators.contains(sb2.toString()))
-                        return false;
-                    else
-                        pInternalForm.add(new Pair<>(sb2.toString(),new Pair<>(0,0)));
+                    if(operators.contains(sb2.toString()) || special_cases.contains(sb2.toString()))
+                    {
+                        if(special_cases.contains(sb2.toString()))
+                        {
 
-                } else if (i<value.length()) {
+                            String operator=sb2.substring(0,sb2.toString().length()-1);
+                            pInternalForm.add(new Pair<>(operator,new Pair<>(0,0)));
+                            sb2.replace(0,sb2.toString().length()-1,"");
+
+                            while(i<value.length() && !operators.contains(String.valueOf(value.charAt(i))) && !separators.contains(String.valueOf(value.charAt(i))))
+                            {
+                                sb2.append(value.charAt(i));
+                                i++;
+                            }
+
+
+                            if(isIdentifier(sb2.toString()) || isConstant(sb2.toString()))
+                            {
+                                if(isIdentifier(sb2.toString())) {
+                                    sym.add(sb2.toString());
+                                    Pair<Integer,Integer> poz=sym.getPosition(sb2.toString());
+                                    pInternalForm.add(new Pair<>("id",poz));
+
+                                }
+                                else {
+                                    sym.add(sb2.toString());
+                                    Pair<Integer,Integer> poz=sym.getPosition(sb2.toString());
+                                    pInternalForm.add(new Pair<>("const",poz));
+                                }
+                            }
+                            else
+                                return false;
+                        }
+                        else
+                        {
+                            pInternalForm.add(new Pair<>(sb2.toString(),new Pair<>(0,0)));
+                        }
+                    }
+
+                    else
+                        return false;
+
+
+                }
+
+                else if (i<value.length()) {
 
                     return false;
                 }
